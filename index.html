@@ -16,6 +16,53 @@
         src="./node_modules/swagger-editor-dist/swagger-editor-standalone-preset.js"></script>
 
     <script src="./node_modules/js-yaml/dist/js-yaml.min.js"></script>
+
+    <style>
+        .tablist {
+            margin-bottom: 0;
+        }
+
+        .tablist li {
+            display: inline;
+            border: solid;
+            border-width: 1px 1px 0 1px;
+            margin: 0 5px 0 0;
+        }
+
+        .tablist li a {
+            padding: 0 10px;
+        }
+
+        .render-area {
+            border: solid 1px black;
+            padding: 20px;
+            min-height: 120px;
+            ;
+        }
+
+        .comment-button {
+            position: relative;
+        }
+
+        .comment-button:hover .comment-hv {
+            display: block;
+        }
+
+        .comment-hv {
+            display: none;
+            color: red;
+            margin-left: 28px;
+            /* moves the tooltip to the right */
+            margin-top: 15px;
+            /* moves it down */
+            position: absolute;
+            z-index: 1000;
+        }
+
+        .Pane {
+            overflow: scroll;
+        }
+    </style>
 </head>
 
 <body>
@@ -23,73 +70,116 @@
 
     <nav>
         <a id="login-link" href="">log in to GitHub</a>
+        <div class="search-area" style="display: inline-block;">
+            <ul class="tablist">
+                <li><a href="javascript:rudrSwitchTab('tb_username', 'search-by-username', 'search-area');"
+                        id="tb_username" class="tabmenu active">search by username</a></li>
+                <li><a href="javascript:rudrSwitchTab('tb_organization', 'search-by-org', 'search-area');"
+                        id="tb_organization" class="tabmenu">search by organization</a></li>
+                <li><a href="javascript:rudrSwitchTab('tb_location', 'search-directory', 'search-area');"
+                        id="tb_location" class="tabmenu">search by location</a></li>
+            </ul>
+        </div>
+        <div class="swagger-area" style="display: inline-block;">
+            <ul class="tablist">
+                <li><a href="javascript:rudrSwitchTab('tb_1', 'content_1', 'swagger-area');" id="tb_1"
+                        class="tabmenu active">swagger ui</a>
+                </li>
+                <li><a href="javascript:rudrSwitchTab('tb_2', 'content_2', 'swagger-area');" id="tb_2"
+                        class="tabmenu">swagger editor</a></li>
+            </ul>
+        </div>
+        <div style="display: inline-block;">
+            <label for="repo-choice">Choose a repository:</label>
+            <input list="repo-list" id="repo-choice" name="repo-choice" />
+
+            <datalist id="repo-list"></datalist>
+
+        </div>
+        <div style="height: 120px;overflow: scroll;">
+            <ol id="repo-file-list"></ol>
+        </div>
     </nav>
+    <section class="search-area">
 
-    <section id="search-by-username">
-        <h2>Search by user</h2>
+        <div class="render-area">
 
-        <label for="username-input">github username</label>
-        <input id="username-input" name="username-input" type="text">
-        <button id="username-button" type="button" data-submit-for="username-input">submit it</button>
+            <div class="tabcontent" id="search-by-username">
+                <h2>Search by user</h2>
+
+                <label for="username-input">github username</label>
+                <input id="username-input" name="username-input" type="text">
+                <button id="username-button" type="button" data-submit-for="username-input">submit it</button>
+            </div>
+
+            <div class="tabcontent" id="search-by-org">
+                <h2>Search by organization</h2>
+
+                <label for="org-input">github organization</label>
+                <input id="org-input" name="org-input" type="text">
+                <button id="org-button" type="button" data-submit-for="org-input">submit</button>
+            </div>
+
+            <div class="tabcontent" id="search-directory">
+                <h2>Search by location</h2>
+
+                <label for="directory-input">directory path or url</label>
+                <input id="directory-input" name="directory-input" type="text"
+                    value="./assets/examples/joshuawordsmith/store-brand-swag/main/openapi.json">
+                <button id="directory-button" type="button" data-submit-for="directory-input">submit</button>
+                <ol id="directory-list"></ol>
+            </div>
+        </div>
     </section>
 
-    <section id="search-by-org">
-        <h2>Search by organization</h2>
+    <section class="swagger-area" style="position: relative;">
+        <div class="render-area">
+            <div id="content_1" class="tabcontent">
+                <div class="render-container" id="swagger-ui">&nbsp;</div>
+            </div>
 
-        <label for="org-input">github organization</label>
-        <input id="org-input" name="org-input" type="text">
-        <button id="org-button" type="button" data-submit-for="org-input">submit</button>
+            <div id="content_2" class="tabcontent" style="display:none;position: relative;height:1000px;">
+                <div id="comment-box" style="min-height: 120px;"></div>
+                <div class="render-container" id="swagger-editor">&nbsp;</div>
+            </div>
+        </div>
     </section>
-
-    <section id="search-directory">
-        <h2>Walk a directory</h2>
-
-        <label for="directory-input">directory path or url</label>
-        <input id="directory-input" name="directory-input" type="text"
-            value="./assets/examples/joshuawordsmith/store-brand-swag/main/openapi.json">
-        <button id="directory-button" type="button" data-submit-for="directory-input">submit</button>
-        <ol id="directory-list"></ol>
-    </section>
-
-    <section>
-        <label for="repo-choice">Choose a repository:</label>
-        <input list="repo-list" id="repo-choice" name="repo-choice" />
-
-        <datalist id="repo-list"></datalist>
-
-        <ol id="repo-file-list"></ol>
-    </section>
-
-    <ul>
-        <li><a href="javascript:rudrSwitchTab('tb_1', 'content_1');" id="tb_1" class="tabmenu active">swagger ui</a></li>
-        <li><a href="javascript:rudrSwitchTab('tb_2', 'content_2');" id="tb_2" class="tabmenu">swagger editor</a></li>
-    </ul>
-
-    <div id="content_1" class="tabcontent">
-        <div class="render-container" id="swagger-ui">&nbsp;</div>
-    </div>
-    <div id="content_2" class="tabcontent" style="display:none;">
-        <div class="render-container" id="swagger-editor">&nbsp;</div>
-    </div>
 
     <script>
-        function rudrSwitchTab(rudr_tab_id, rudr_tab_content) {
+        function rudrSwitchTab(rudr_tab_id, rudr_tab_content, tab_section) {
             // first of all we get all tab content blocks (I think the best way to get them by class names)
-            var x = document.getElementsByClassName("tabcontent");
-            var i;
-            for (i = 0; i < x.length; i++) {
-                x[i].style.display = 'none'; // hide all tab content
-            }
-            document.getElementById(rudr_tab_content).style.display = 'block'; // display the content of the tab we need
+            const sections = document.getElementsByClassName(tab_section);
+            [...sections].forEach((section) => {
+                console.log(section);
+                var x = section.querySelectorAll(".tabcontent");
+                var i;
+                for (i = 0; i < x.length; i++) {
+                    x[i].style.display = 'none'; // hide all tab content
+                }
+                var y = section.querySelector(`#${rudr_tab_content}`);
+                if (y) {
+                    y.style.display = 'block'; // display the content of the tab we need
+                }
 
-            // now we get all tab menu items by class names (use the next code only if you need to highlight current tab)
-            var x = document.getElementsByClassName("tabmenu");
-            var i;
-            for (i = 0; i < x.length; i++) {
-                x[i].className = 'tabmenu';
-            }
-            document.getElementById(rudr_tab_id).className = 'tabmenu active';
+
+                // now we get all tab menu items by class names (use the next code only if you need to highlight current tab)
+                var x = section.querySelectorAll(".tabmenu");
+                var i;
+                for (i = 0; i < x.length; i++) {
+                    x[i].className = 'tabmenu';
+                }
+                var y = section.querySelector(`#${rudr_tab_id}`);
+                if (y) {
+                    y.className = 'tabmenu active';
+                }
+                setTimeout(() => {
+                    window.attachCommentBox();
+                }, 200);
+            });
         }
+        [...document.querySelectorAll('.tabmenu.active')].forEach((node) => {
+            node.click();
+        });
     </script>
 
     <script type="text/javascript" src="./src/client/main.js"></script>

@@ -57,12 +57,23 @@ const attachCommentBox = () => {
   const cells = document.getElementsByClassName('ace_gutter-cell');
   [...cells].forEach((cell) => {
     const el = document.createElement('button');
-    el.innerText = '+';
+    const txt = document.createElement('span');
+    const hv = document.createElement('span');
+
+    el.className = 'comment-button';
+    txt.innerText = ' + '
+    hv.className = 'comment-hv';
+
+    el.appendChild(txt);
+    el.appendChild(hv);
     cell.prepend(el);
+
     el.addEventListener('click', () => {
-      const comment = prompt('enter your comment');
+      const comment = prompt(`${el.title}\nenter your comment`);
       if (comment) {
-        el.title = comment;
+        el.innerText = ' * ';
+        el.title = `${el.title}\n\n${comment}`
+        document.getElementById('comment-box').innerText = el.title;
       }
     });
   });
@@ -145,6 +156,7 @@ const getSwaggerDocs = async (username, accessToken, userType) => {
   });
 
   const files = await response.json();
+  console.log({files});
 
   const names = files.items
     .reduce((prev, { path, repository }) => {
@@ -154,6 +166,8 @@ const getSwaggerDocs = async (username, accessToken, userType) => {
         prev[repository.name] = {
           paths: [path],
           owner: repository.owner.login,
+          name: repository.name,
+          description: repository.description,
         };
       }
       return prev;
@@ -212,29 +226,23 @@ const getUserRepos = async (username, userType) => {
   LazyState.ownerValue = username;
 
   const files = await getSwaggerDocs(username, accessToken, userType);
-  console.log({files});
-  const repositories = await requestRepos(username, accessToken);
-  console.log({ repositories });
+  const fileList = Object.keys(files).map((key) => files[key]);
 
-  const names = repositories.items
-    .map(({ name, description }) => ({ name, description }))
-    .filter(({ name }) => files[name]);
-
-  names.forEach(({ name, description }) => {
-    const node = document.createElement('option');
-    node.innerText = `${name}: ${description}`;
-    node.value = name;
-    repoList.appendChild(node);
+  fileList.forEach(({ name, description }) => {
+      const node = document.createElement('option');
+      node.innerText = `${name}: ${description}`;
+      node.value = name;
+      repoList.appendChild(node);
   });
-  console.log({ names });
-  if (names.length) {
+
+  if (fileList.length) {
     document.getElementById('repo-choice').style.outline = '3px solid limegreen';
     repoChoice.removeAttribute('disabled');
   } else {
     document.getElementById('repo-choice').style.outline = 'initial';
   }
 
-  return names;
+  return Object.keys(files).map((key) => files[key]);
 };
 
 async function retrieveInputOnClick(event, attr = 'data-submit-for', userType = 'user') {
