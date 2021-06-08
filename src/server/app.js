@@ -5,8 +5,8 @@ const dotenv = require('dotenv').config();
 console.log(dotenv);
 
 const server = http.createServer((req, res) => {
-  if (req.headers.origin !== 'http://127.0.0.1:8080') {
-    console.error('bad origin');
+  if (req.headers.origin !== 'http://localhost:8080') {
+    console.error(`bad origin: ${req.headers.origin}`);
     res.writeHead(500, {
       'Content-Type': 'application/json',
       'Access-Control-Allow-Origin': '*',

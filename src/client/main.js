@@ -2,15 +2,15 @@ const urlString = window.location.href;
 const urlInstance = new URL(urlString);
 
 const ghCode = urlInstance.searchParams.get('code');
-const defaultOrg = urlInstance.searchParams.get('org');
+const defaultOrg = urlInstance.searchParams.get('org') || sessionStorage.getItem('org');
 if (defaultOrg) {
   document.getElementById('org-input').value = defaultOrg;
   sessionStorage.setItem('org', defaultOrg);
 }
-const defaultUser = urlInstance.searchParams.get('user');
+const defaultUser = urlInstance.searchParams.get('user') || sessionStorage.getItem('user');
 if (defaultUser) {
   document.getElementById('username-input').value = defaultUser;
-  sessionStorage.setItem('username', defaultUser);
+  sessionStorage.setItem('user', defaultUser);
 }
 
 const repoChoice = document.getElementById('repo-choice');
@@ -91,7 +91,19 @@ const retrieveApiSpec = (event) => {
           ],
         });
 
-        ui.specActions.updateSpec(JSON.stringify(jsyaml.load(content)));
+        const contentString = JSON.stringify(jsyaml.load(content));
+        ui.specActions.updateSpec(contentString);
+
+        // const editor = SwaggerEditorBundle({
+        //   // url: inputNode.value,
+        //   dom_id: '#swagger-editor',
+        //   layout: 'StandaloneLayout',
+        //   presets: [
+        //     SwaggerEditorBundle.presets.apis,
+        //   ]
+        // });
+
+        editor.specActions.updateSpec(contentString);
       })
     });
   }
@@ -194,9 +206,12 @@ const getUserRepos = async (username, userType) => {
     node.value = name;
     repoList.appendChild(node);
   });
-  document.getElementById('repo-choice').style.outline = '3px solid limegreen';
+  console.log({ names });
   if (names.length) {
+    document.getElementById('repo-choice').style.outline = '3px solid limegreen';
     repoChoice.removeAttribute('disabled');
+  } else {
+    document.getElementById('repo-choice').style.outline = 'initial';
   }
 
   return names;
@@ -214,7 +229,7 @@ async function retrieveInputOnClick(event, attr = 'data-submit-for', userType = 
 }
 
 const retrieveCredentials = async (redirectUrl) => {
-  const clientIdResponse = await fetch('http://127.0.0.1:5000/client-id', {
+  const clientIdResponse = await fetch('http://localhost:5000/client-id', {
     'accept': 'application/json',
     'method': 'GET',
   });
@@ -228,7 +243,7 @@ const retrieveCredentials = async (redirectUrl) => {
 
 const submitCode = async (ghCode) => {
   console.log(ghCode);
-  const clientIdResponse = await fetch('http://127.0.0.1:5000/auth-token', {
+  const clientIdResponse = await fetch('http://localhost:5000/auth-token', {
     headers: new Headers({
       'code': ghCode,
       'redirect': urlString,
@@ -264,7 +279,7 @@ const goNextLevel = (anchorNode, inputNode, submitFor) => {
     inputNode.value = anchorNode.href;
     crawlDirectory(submitFor);
   });
-}
+};
 
 const crawlDirectory = async (submitFor) => {
   const inputNode = document.getElementById(submitFor);
@@ -288,6 +303,14 @@ const crawlDirectory = async (submitFor) => {
           SwaggerUIBundle.presets.apis,
         ],
       });
+      // SwaggerEditorBundle({
+      //   url: inputNode.value,
+      //   dom_id: '#swagger-editor',
+      //   layout: 'StandaloneLayout',
+      //   presets: [
+      //     SwaggerEditorBundle.presets.apis,
+      //   ]
+      // });
       return [];
     }
 

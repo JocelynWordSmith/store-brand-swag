@@ -7,8 +7,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Store Brand Swag</title>
 
-    <link rel="stylesheet" type="text/css"
-        href="https://cdn.rawgit.com/swagger-api/swagger-ui/master/dist/swagger-ui.css" />
+    <link rel="stylesheet" type="text/css" href="./node_modules/swagger-ui-dist/swagger-ui.css" />
+    <script src="./node_modules/swagger-ui-dist/swagger-ui-bundle.js" charset="UTF-8"></script>
+
+    <link rel="stylesheet" type="text/css" href="./node_modules/swagger-editor-dist/swagger-editor.css" />
+    <script type="text/javascript" src="./node_modules/swagger-editor-dist/swagger-editor-bundle.js"></script>
+
+    <script src="./node_modules/js-yaml/dist/js-yaml.min.js"></script>
 </head>
 
 <body>
@@ -38,7 +43,7 @@
         <h2>Walk a directory</h2>
 
         <label for="directory-input">directory path or url</label>
-        <input id="directory-input" name="directory-input" type="text" value="http://127.0.0.1:8080/assets/">
+        <input id="directory-input" name="directory-input" type="text" value="./assets/">
         <button id="directory-button" type="button" data-submit-for="directory-input">submit</button>
         <ol id="directory-list"></ol>
     </section>
@@ -54,9 +59,9 @@
 
 
     <div id="swagger-ui">&nbsp;</div>
+    <div id="swagger-editor">&nbsp;</div>
+    <div id="swagger-static-head">&nbsp;</div>
 
-    <script src="./js-yaml.js"></script>
-    <script src="https://unpkg.com/swagger-ui-dist@3/swagger-ui-bundle.js" charset="UTF-8"></script>
     <script type="text/javascript" src="./src/client/main.js"></script>
 
 </body>
