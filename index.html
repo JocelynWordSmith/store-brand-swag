@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Store Brand Swag</title>
+
+    <link rel="stylesheet" type="text/css"
+        href="https://cdn.rawgit.com/swagger-api/swagger-ui/master/dist/swagger-ui.css" />
+</head>
+
+<body>
+    <h1>Store Brand Swag</h1>
+
+    <nav>
+        <a id="login-link" href="">log in to GitHub</a>
+    </nav>
+
+    <section id="search-by-username">
+        <h2>Search by user</h2>
+
+        <label for="username-input">github username</label>
+        <input id="username-input" name="username-input" type="text">
+        <button id="username-button" type="button" data-submit-for="username-input">submit it</button>
+    </section>
+
+    <section id="search-by-org">
+        <h2>Search by organization</h2>
+
+        <label for="org-input">github organization</label>
+        <input id="org-input" name="org-input" type="text">
+        <button id="org-button" type="button" data-submit-for="org-input">submit</button>
+    </section>
+
+    <section id="search-directory">
+        <h2>Walk a directory</h2>
+
+        <label for="directory-input">directory path or url</label>
+        <input id="directory-input" name="directory-input" type="text" value="http://127.0.0.1:8080/assets/">
+        <button id="directory-button" type="button" data-submit-for="directory-input">submit</button>
+        <ol id="directory-list"></ol>
+    </section>
+
+    <section>
+        <label for="repo-choice">Choose a repository:</label>
+        <input list="repo-list" id="repo-choice" name="repo-choice" />
+
+        <datalist id="repo-list"></datalist>
+
+        <ol id="repo-file-list"></ol>
+    </section>
+
+
+    <div id="swagger-ui">&nbsp;</div>
+
+    <script src="./js-yaml.js"></script>
+    <script src="https://unpkg.com/swagger-ui-dist@3/swagger-ui-bundle.js" charset="UTF-8"></script>
+    <script type="text/javascript" src="./src/client/main.js"></script>
+
+</body>
+
+</html>
