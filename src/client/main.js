@@ -34,6 +34,42 @@ class LazyState {
   names = {};
 }
 
+const ui = SwaggerUIBundle({
+  dom_id: '#swagger-ui',
+  presets: [
+    SwaggerUIBundle.presets.apis,
+  ],
+});
+
+window.ui = ui;
+window.SwaggerUIBundle = SwaggerUIBundle;
+
+const editor = SwaggerEditorBundle({
+  // url: inputNode.value,
+  dom_id: '#swagger-editor',
+  layout: 'StandaloneLayout',
+  presets: [
+    SwaggerEditorStandalonePreset
+  ]
+});
+
+const attachCommentBox = () => {
+  const cells = document.getElementsByClassName('ace_gutter-cell');
+  [...cells].forEach((cell) => {
+    const el = document.createElement('button');
+    el.innerText = '+';
+    cell.prepend(el);
+    el.addEventListener('click', () => {
+      const comment = prompt('enter your comment');
+      if (comment) {
+        el.title = comment;
+      }
+    });
+  });
+}
+
+window.attachCommentBox = attachCommentBox;
+
 const retrieveApiSpec = (event) => {
   if (event.target) {
     const repoValue = event.target.value;
@@ -84,31 +120,15 @@ const retrieveApiSpec = (event) => {
 
         repoChoice.value = '';
 
-        const ui = SwaggerUIBundle({
-          dom_id: '#swagger-ui',
-          presets: [
-            SwaggerUIBundle.presets.apis,
-          ],
-        });
-
         const contentString = JSON.stringify(jsyaml.load(content));
-        ui.specActions.updateSpec(contentString);
 
-        // const editor = SwaggerEditorBundle({
-        //   // url: inputNode.value,
-        //   dom_id: '#swagger-editor',
-        //   layout: 'StandaloneLayout',
-        //   presets: [
-        //     SwaggerEditorBundle.presets.apis,
-        //   ]
-        // });
-
-        editor.specActions.updateSpec(contentString);
+        await ui.specActions.updateSpec(contentString);
+        await editor.specActions.updateSpec(contentString);
+        attachCommentBox();
       })
     });
   }
 };
-
 
 const getSwaggerDocs = async (username, accessToken, userType) => {
   const owner = userType === 'user' ? `user:${username}` : `org:${username}`
@@ -296,21 +316,9 @@ const crawlDirectory = async (submitFor) => {
     const doc = parser.parseFromString(htmlString, "text/html");
     const directoryLinks = [...doc.querySelectorAll('.display-name a')];
     if (directoryLinks.length === 0) {
-      SwaggerUIBundle({
-        url: inputNode.value,
-        dom_id: '#swagger-ui',
-        presets: [
-          SwaggerUIBundle.presets.apis,
-        ],
-      });
-      // SwaggerEditorBundle({
-      //   url: inputNode.value,
-      //   dom_id: '#swagger-editor',
-      //   layout: 'StandaloneLayout',
-      //   presets: [
-      //     SwaggerEditorBundle.presets.apis,
-      //   ]
-      // });
+      await ui.specActions.download(inputNode.value);
+      await editor.specActions.updateSpecOrigin(inputNode.value);
+      attachCommentBox();
       return [];
     }
 

@@ -12,6 +12,8 @@
 
     <link rel="stylesheet" type="text/css" href="./node_modules/swagger-editor-dist/swagger-editor.css" />
     <script type="text/javascript" src="./node_modules/swagger-editor-dist/swagger-editor-bundle.js"></script>
+    <script type="text/javascript"
+        src="./node_modules/swagger-editor-dist/swagger-editor-standalone-preset.js"></script>
 
     <script src="./node_modules/js-yaml/dist/js-yaml.min.js"></script>
 </head>
@@ -43,7 +45,8 @@
         <h2>Walk a directory</h2>
 
         <label for="directory-input">directory path or url</label>
-        <input id="directory-input" name="directory-input" type="text" value="./assets/">
+        <input id="directory-input" name="directory-input" type="text"
+            value="./assets/examples/joshuawordsmith/store-brand-swag/main/openapi.json">
         <button id="directory-button" type="button" data-submit-for="directory-input">submit</button>
         <ol id="directory-list"></ol>
     </section>
@@ -57,10 +60,37 @@
         <ol id="repo-file-list"></ol>
     </section>
 
+    <ul>
+        <li><a href="javascript:rudrSwitchTab('tb_1', 'content_1');" id="tb_1" class="tabmenu active">swagger ui</a></li>
+        <li><a href="javascript:rudrSwitchTab('tb_2', 'content_2');" id="tb_2" class="tabmenu">swagger editor</a></li>
+    </ul>
 
-    <div id="swagger-ui">&nbsp;</div>
-    <div id="swagger-editor">&nbsp;</div>
-    <div id="swagger-static-head">&nbsp;</div>
+    <div id="content_1" class="tabcontent">
+        <div class="render-container" id="swagger-ui">&nbsp;</div>
+    </div>
+    <div id="content_2" class="tabcontent" style="display:none;">
+        <div class="render-container" id="swagger-editor">&nbsp;</div>
+    </div>
+
+    <script>
+        function rudrSwitchTab(rudr_tab_id, rudr_tab_content) {
+            // first of all we get all tab content blocks (I think the best way to get them by class names)
+            var x = document.getElementsByClassName("tabcontent");
+            var i;
+            for (i = 0; i < x.length; i++) {
+                x[i].style.display = 'none'; // hide all tab content
+            }
+            document.getElementById(rudr_tab_content).style.display = 'block'; // display the content of the tab we need
+
+            // now we get all tab menu items by class names (use the next code only if you need to highlight current tab)
+            var x = document.getElementsByClassName("tabmenu");
+            var i;
+            for (i = 0; i < x.length; i++) {
+                x[i].className = 'tabmenu';
+            }
+            document.getElementById(rudr_tab_id).className = 'tabmenu active';
+        }
+    </script>
 
     <script type="text/javascript" src="./src/client/main.js"></script>
 
