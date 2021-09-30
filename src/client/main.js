@@ -1,6 +1,9 @@
 const urlString = window.location.href;
 const urlInstance = new URL(urlString);
 
+const urlSearchParams = new URLSearchParams(window.location.search);
+const params = Object.fromEntries(urlSearchParams.entries());
+
 const ghCode = urlInstance.searchParams.get('code');
 const defaultOrg = urlInstance.searchParams.get('org');
 if (defaultOrg) {
@@ -38,7 +41,6 @@ const retrieveApiSpec = (event) => {
   if (event.target) {
     const repoValue = event.target.value;
     const names = LazyState.names;
-
     if (!repoValue) {
       return null;
     }
@@ -46,6 +48,7 @@ const retrieveApiSpec = (event) => {
     repoFileList.innerHTML = '';
     ownerValue = names[repoValue].owner;
     names[repoValue].paths.forEach((filepath) => {
+      console.log(1, filepath);
       const url = `https://api.github.com/repos/${ownerValue}/${repoValue}/contents/${filepath}`;
       console.log({ url });
       const anchorNode = document.createElement('a');
@@ -92,7 +95,12 @@ const retrieveApiSpec = (event) => {
         });
 
         ui.specActions.updateSpec(JSON.stringify(jsyaml.load(content)));
-      })
+      });
+      console.log(url.includes(params.filename), url, params.filename);
+      if (url.includes(params.filename)) {
+        const event = new Event('click');
+        listItemNode.dispatchEvent(event);
+      }
     });
   }
 };
@@ -327,3 +335,30 @@ directoryButton.addEventListener('click', (event) => {
   const submitFor = event.target.getAttribute(attr);
   crawlDirectory(submitFor);
 });
+
+if (params.username) {
+  const input = document.getElementById(usernameButton.dataset.submitFor);
+  input.setAttribute('value', params.username);
+  const event = new Event('click');
+  usernameButton.dispatchEvent(event);
+}
+
+if (params.username && params.repoName) {
+  const checkRepoLoop = setInterval(function () {
+    const options = [...repoList.getElementsByTagName('option')];
+
+    if (options.length) {
+      // options.forEach((option, index) => {
+      //   if (params.repoName === option.value) {
+      //     option.selected = true;
+      //     // options.selectedIndex = index;
+      //   }
+      // });
+      repoChoice.setAttribute('value', params.repoName);
+      const event = new Event('change');
+      repoSelect.dispatchEvent(event);
+
+      clearInterval(checkRepoLoop);
+    }
+  }, 200);
+}
